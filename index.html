@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Car Gallery</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 30px; }
+  .gallery { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+  .car-card { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 15px; width: 300px; text-align: center; }
+  .car-card h2 { margin: 10px 0; }
+  .car-card img { max-width: 100%; max-height: 200px; border-radius: 8px; display: block; margin: 0 auto 10px; }
+  .details { margin: 10px 0; font-size: 14px; color: #333; text-align: left; }
+  .controls { display: flex; justify-content: space-between; margin-top: 10px; }
+  .controls button { padding: 5px 10px; border: none; background: #007bff; color: white; border-radius: 5px; cursor: pointer; }
+  .controls button:hover { background: #0056b3; }
+</style>
+</head>
+<body>
+<h1>Car Gallery</h1>
+<div class="gallery" id="gallery"></div>
+
+<script>
+async function loadCars() {
+  // 1️⃣ Load images data (Python-generated cars.json)
+  const imagesRes = await fetch("cars.json");
+  const imagesData = await imagesRes.json();
+
+  // 2️⃣ Load details from Google Sheets JSON endpoint
+  const sheetRes = await fetch("https://script.google.com/macros/s/AKfycbwNRd_OfUf9woVZsuYw6UVrQXFteqH-qxQwU3NHKDvNqQXNx2kKb1GP1iBIrxS9r9W8Rg/exec");
+  const sheetData = await sheetRes.json();
+
+  const gallery = document.getElementById("gallery");
+
+  imagesData.forEach(car => {
+    // Match details by name
+    const details = sheetData.find(d => d.Name.toLowerCase() === car.name.toLowerCase()) || {};
+
+    let currentIndex = 0;
+    const card = document.createElement("div");
+    card.className = "car-card";
+
+    const title = document.createElement("h2");
+    title.textContent = car.name;
+
+    const img = document.createElement("img");
+    img.src = car.images[currentIndex];
+
+    const detailsDiv = document.createElement("div");
+    detailsDiv.className = "details";
+
+    // Loop through all columns dynamically (except "Name")
+    Object.keys(details).forEach(key => {
+      if (key.toLowerCase() !== "name" && details[key]) {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>${key}:</strong> ${details[key]}`;
+        detailsDiv.appendChild(p);
+      }
+    });
+
+    const controls = document.createElement("div");
+    controls.className = "controls";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "← Prev";
+    prevBtn.onclick = () => {
+      currentIndex = (currentIndex - 1 + car.images.length) % car.images.length;
+      img.src = car.images[currentIndex];
+    };
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next →";
+    nextBtn.onclick = () => {
+      currentIndex = (currentIndex + 1) % car.images.length;
+      img.src = car.images[currentIndex];
+    };
+
+    controls.appendChild(prevBtn);
+    controls.appendChild(nextBtn);
+
+    card.appendChild(title);
+    card.appendChild(img);
+    card.appendChild(detailsDiv);
+    card.appendChild(controls);
+
+    gallery.appendChild(card);
+  });
+}
+
+loadCars();
+</script>
+</body>
+</html>

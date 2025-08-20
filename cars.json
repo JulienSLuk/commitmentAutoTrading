@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Honda city",
+    "images": [
+      "images/Honda City/Honda City (Driver's Seat).jpg",
+      "images/Honda City/Honda City (Mileage and Speedometer).jpg",
+      "images/Honda City/Honda City (Reverse Camera).jpg",
+      "images/Honda City/Honda City Exterior (Back).jpg",
+      "images/Honda City/Honda City Exterior (Front 2).jpg",
+      "images/Honda City/Honda City Exterior (Front).jpg",
+      "images/Honda City/Honda City Exterior (Side 1).jpg",
+      "images/Honda City/Honda City Interior (Backseats).jpg",
+      "images/Honda City/Honda City Interior (Driver's Seat 1).jpg",
+      "images/Honda City/Honda City Interior (Frontseats).jpg"
+    ]
+  },
+  {
+    "name": "Toyota camry",
+    "images": [
+      "images/Toyota Camry/Toyota Camry Exterior (Back).jpg",
+      "images/Toyota Camry/Toyota Camry Exterior (Boot Space).jpg",
+      "images/Toyota Camry/Toyota Camry Exterior (Front).jpg",
+      "images/Toyota Camry/Toyota Camry Interior (Backseat).jpg",
+      "images/Toyota Camry/Toyota Camry Interior (Driver's Seat).jpg",
+      "images/Toyota Camry/Toyota Camry Interior (Front Passenger Seat).jpg",
+      "images/Toyota Camry/Toyota Camry Interior (Mileage and Speedometer).jpg"
+    ]
+  }
+]
