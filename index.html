@@ -5,7 +5,7 @@
 <title>Car Gallery</title>
 <style>
   body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-  h1 { text-align: center; margin-bottom: 30px; }
+  h1, h2 { text-align: center; margin-bottom: 30px; }
   .gallery { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
   .car-card { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 15px; width: 300px; text-align: center; }
   .car-card h2 { margin: 10px 0; }
@@ -40,6 +40,13 @@
     0% { transform: rotate(0deg);}
     100% { transform: rotate(360deg);}
   }
+
+  /* Contact Form */
+  form { display: flex; flex-direction: column; }
+  input, textarea { margin: 5px 0 15px; padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 100%; }
+  button.submit-btn { padding:10px 20px; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer; }
+  button.submit-btn:hover { background:#0056b3; }
+  #form-status { margin-top:10px; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -51,10 +58,26 @@
 
 <div class="gallery" id="gallery" style="display:none;"></div>
 
+<h2>Contact Me</h2>
+<div style="max-width:500px; margin:20px auto; background:white; padding:20px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+  <form id="contact-form" action="https://formspree.io/f/xnnzkzao" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="_replyto" required>
+
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" rows="5" required></textarea>
+
+    <button type="submit" class="submit-btn">Send Message</button>
+  </form>
+  <p id="form-status"></p>
+</div>
+
 <script>
 async function loadCars() {
   try {
-    // Show loader
     const loader = document.getElementById("loader");
     const gallery = document.getElementById("gallery");
 
@@ -67,7 +90,6 @@ async function loadCars() {
     const sheetData = await sheetRes.json();
 
     imagesData.forEach(car => {
-      // Match details by name
       const details = sheetData.find(d => d.Name.toLowerCase() === car.name.toLowerCase()) || {};
 
       let currentIndex = 0;
@@ -83,7 +105,6 @@ async function loadCars() {
       const detailsDiv = document.createElement("div");
       detailsDiv.className = "details";
 
-      // Loop through all columns dynamically (except "Name")
       Object.keys(details).forEach(key => {
         if (key.toLowerCase() !== "name" && details[key]) {
           const p = document.createElement("p");
@@ -120,7 +141,6 @@ async function loadCars() {
       gallery.appendChild(card);
     });
 
-    // Hide loader and show gallery
     loader.style.display = "none";
     gallery.style.display = "flex";
 
@@ -130,7 +150,37 @@ async function loadCars() {
   }
 }
 
-// Run
+// Contact form handler
+const form = document.getElementById("contact-form");
+const status = document.getElementById("form-status");
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault();
+  const formData = new FormData(form);
+  fetch(form.action, {
+    method: form.method,
+    body: formData,
+    headers: { 'Accept': 'application/json' }
+  })
+  .then(response => {
+    if (response.ok) {
+      status.textContent = "Thanks! Your message has been sent.";
+      status.style.color = "green";
+      form.reset();
+    } else {
+      response.json().then(data => {
+        status.textContent = data.errors ? data.errors.map(e => e.message).join(", ") : "Oops! There was a problem.";
+        status.style.color = "red";
+      });
+    }
+  })
+  .catch(error => {
+    status.textContent = "Oops! There was a problem sending your message.";
+    status.style.color = "red";
+  });
+});
+
+// Load gallery
 loadCars();
 </script>
 
